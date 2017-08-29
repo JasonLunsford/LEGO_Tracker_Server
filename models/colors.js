@@ -1,0 +1,16 @@
+var mongoose = require("mongoose"),
+	Schema = mongoose.Schema;
+
+// external data
+var ExternalIdSchema = new Schema({
+	color_id      : { type: Number, min: [0, 'Invalid color id'] },
+	source        : { type: String, lowercase: true, trim: true }
+});
+
+var ColorsSchema = new Schema({
+	name          : { type: String, required: true, trim: true },
+	rgb           : { type: String, required: true, lowercase: true, trim: true },
+	external_ids  : [ExternalIdSchema]
+});
+
+module.exports = mongoose.model('Colors', ColorsSchema, 'colors');
