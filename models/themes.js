@@ -4,7 +4,7 @@ var mongoose = require("mongoose"),
 var ThemesSchema = new Schema({
 	name  		: { type: String, required: true, trim: true },
 	parent_name : { type: String, trim: true },
-	parent_id   : { type: Schema.ObjectId, ref: 'Themes', default: 0 },
+	parent_id   : { type: String, default: 0 },
 	set_count   : { type: Number, min: [0, 'Invalid set count'] }
 });
 
