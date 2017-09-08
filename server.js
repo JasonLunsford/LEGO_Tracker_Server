@@ -1,64 +1,37 @@
-var express = require("express");
-var mongoose = require("mongoose"),
+let express = require("express");
+let mongoose = require("mongoose"),
 	Schema = mongoose.Schema;
-var cors = require("cors");
+let cors = require("cors");
 
-var mongoDb = 'mongodb://localhost/lego_tracker';
+let mongoDb = 'mongodb://localhost/lego_tracker';
 
 // Enable express and CORS
-var app = express();
+let app = express();
 app.use(cors());
 
-// Prepare models
-var Colors = require('./models/colors');
-var PieceCategories = require('./models/piece_categories');
-var Pieces = require('./models/pieces');
-var Sets = require('./models/sets');
-var Themes = require('./models/themes');
-var UserSets = require('./models/user_sets');
+// Prepare routes
+let index = require('./routes/index');
+let colors = require('./routes/colors');
+let pieces = require('./routes/pieces');
+let piece_categories = require('./routes/piece_categories');
+let sets = require('./routes/sets');
+let themes = require('./routes/themes');
+let user_sets = require('./routes/user_sets');
+
+// Use routes
+app.use('/', index);
+app.use('/colors', colors);
+app.use('/pieces', pieces);
+app.use('/piece_categories', piece_categories);
+app.use('/sets', sets);
+app.use('/themes', themes);
+app.use('/user_sets', user_sets);
 
 // Connect to the db
 mongoose.connect(mongoDb);
-var db = mongoose.connection;
+let db = mongoose.connection;
 
 // Bind mongodb errors and send to console log
 db.on('error', console.error.bind(console, 'MongoDB connection error:'));
-
-// APIs
-app.get('/colors', function(req, res) {
-	Colors.find(function(err, doc) {
-		res.send(doc);
-	})
-});
-
-app.get('/piece_categories', function(req, res) {
-	PieceCategories.find(function(err, doc) {
-		res.send(doc);
-	})
-});
-
-app.get('/pieces', function(req, res) {
-	Pieces.find(function(err, doc) {
-		res.send(doc);
-	})
-});
-
-app.get('/sets', function(req, res) {
-	Sets.find(function(err, doc) {
-		res.send(doc);
-	})
-});
-
-app.get('/themes', function(req, res) {
-	Themes.find(function(err, doc) {
-		res.send(doc);
-	})
-});
-
-app.get('/user_sets', function(req, res) {
-	UserSets.find(function(err, doc) {
-		res.send(doc);
-	})
-});
 
 app.listen(8181);

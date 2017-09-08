@@ -1,7 +1,7 @@
-var mongoose = require("mongoose"),
+let mongoose = require("mongoose"),
 	Schema = mongoose.Schema;
 
-var UserSetsSchema = new Schema({
+let UserSetsSchema = new Schema({
 	set_id   : { type: Schema.ObjectId, required: true, ref: 'Sets' },
 	owned_num: { type: Number, min: [0, 'Invalid owned number'] },
 	rating   : { type: Number, min: 0, max: 5 },

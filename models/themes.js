@@ -1,16 +1,16 @@
-var mongoose = require("mongoose"),
+let mongoose = require("mongoose"),
 	Schema = mongoose.Schema;
 
 // external data
-var ExternalIdSchema = new Schema({
+let ExternalIdSchema = new Schema({
 	theme_id    : { type: Number, min: [0, 'Invalid theme id'] },
 	source      : { type: String, lowercase: true, trim: true }
 });
 
-var ThemesSchema = new Schema({
+let ThemesSchema = new Schema({
 	name        : { type: String, required: true, trim: true },
 	parent_name : { type: String, trim: true },
-	parent_id   : { type: String, default: null },
+	parent_id   : { type: Object },
 	set_count   : { type: Number, min: [0, 'Invalid set count'] },
 	external_ids: [ExternalIdSchema]
 });
