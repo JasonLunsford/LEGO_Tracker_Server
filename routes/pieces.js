@@ -3,6 +3,8 @@ let router = express.Router();
 
 let Pieces = require('../models/pieces');
 
+let isValidId = require ('../utils/utils');
+
 router.get('/', (req, res) => {
 	// Pieces.find((err, doc) => {
 	// 	res.send(doc);
@@ -12,6 +14,10 @@ router.get('/', (req, res) => {
 
 router.get('/:id', (req, res) => {
 	// let pieceId = req.params.id;
+
+	// if (!isValidId(pieceId)) {
+	// 	res.status(500).send({status: 500, error: 'Invalid id'});
+	// }
 
 	// Pieces.findById(pieceId, (err, doc) => {
 	// 	res.send(doc);

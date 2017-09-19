@@ -27,6 +27,11 @@ app.use('/sets', sets);
 app.use('/themes', themes);
 app.use('/user_sets', user_sets);
 
+// Global failure route
+app.all('/*', (req, res) => {
+	res.status(500).send({status: 500, error: 'Invalid endpoint'});
+});
+
 // Connect to the db
 mongoose.connect(mongoDb);
 let db = mongoose.connection;

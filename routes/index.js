@@ -2,7 +2,7 @@ let express = require("express");
 let router = express.Router();
 
 router.get('/', (req, res) => {
-	res.send('Not a valid endpoint');
+	res.status(500).send({status: 500, error: 'Invalid endpoint'});
 });
 
 module.exports = router;
