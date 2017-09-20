@@ -1,40 +1,43 @@
-let express = require("express");
-let router = express.Router();
+const express = require('express');
+const router = express.Router();
 
-let Themes = require('../models/themes');
+const Themes = require('../models/themes');
 
-let isValidId = require ('../utils/utils');
+const isValidId = require ('../utils/utils');
 
-router.get('/', (req, res) => {
-	Themes.find((err, doc) => {
-		res.send(doc);
-	});
+router.get('/', async (req, res) => {
+	let query = req.query.q;
+	let themes;
+
+	if (query) {
+		// leverage mongodb indexing to search targeted fields
+		themes = await Themes.find({$text: {$search: query}}).exec();
+	} else {
+		// no query passed, return all themes
+		themes = await Themes.find().exec();
+	}
+
+	if (themes.length === 0) {
+		res.status(404).send([{status: 404, error: 'No results matching that search term'}]);
+	}
+
+	res.send(themes);
 });
 
-router.get('/id/:id', (req, res) => {
+router.get('/:id', async (req, res) => {
 	let themeId = req.params.id;
 
 	if (!isValidId(themeId)) {
 		res.status(404).send({status: 404, error: 'Id not found'});
 	}
 
-	Themes.findById(themeId, (err, doc) => {
-		// need to handle no document found case, use same error message
-		res.send(doc);
-	});
+	let theme = await Themes.findById(themeId).exec();
+
+	if (theme === null) {
+		res.status(404).send({status: 404, error: 'Id not found'});
+	} 
+
+	res.send(theme);
 });
-
-router.get('/name/:name', (req, res) => {
-	let themeName = req.params.name;
-
-	// need error handling util method, regEx should not be too strict
-
-	Themes.find({name: themeName}, (err, doc) => {
-		// need to handle no document found case
-		res.send(doc);
-	});
-});
-
-// add more endpoints for parent id and parent name
 
 module.exports = router;

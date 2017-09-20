@@ -1,5 +1,5 @@
-let mongoose = require("mongoose"),
-	Schema = mongoose.Schema;
+const mongoose = require('mongoose'),
+	  Schema = mongoose.Schema;
 
 // external data
 let ExternalIdSchema = new Schema({
@@ -12,5 +12,8 @@ let PieceCategoriesSchema = new Schema({
 	piece_count : { type: Number, min: [1, 'Invalid piece count'] },
 	external_ids: [ExternalIdSchema]
 });
+
+// Indexing all fields of type String, referenced as text
+PieceCategoriesSchema.index({'$**': 'text'});
 
 module.exports = mongoose.model('PieceCategories', PieceCategoriesSchema, 'piece_categories');

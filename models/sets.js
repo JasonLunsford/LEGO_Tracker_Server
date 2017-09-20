@@ -1,5 +1,5 @@
-let mongoose = require("mongoose"),
-	Schema = mongoose.Schema;
+const mongoose = require('mongoose'),
+	  Schema = mongoose.Schema;
 
 // external data
 let UrlsSchema = new Schema({
@@ -23,5 +23,8 @@ let SetsSchema = new Schema({
 	build_urls  : [UrlsSchema],
 	set_pieces  : [SetPiecesSchema]
 });
+
+// Indexing all fields of type String, referenced as text
+SetsSchema.index({'$**': 'text'});
 
 module.exports = mongoose.model('Sets', SetsSchema, 'sets');

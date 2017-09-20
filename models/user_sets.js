@@ -1,5 +1,5 @@
-let mongoose = require("mongoose"),
-	Schema = mongoose.Schema;
+const mongoose = require('mongoose'),
+	  Schema = mongoose.Schema;
 
 let UserSetsSchema = new Schema({
 	set_id   : { type: Schema.ObjectId, required: true, ref: 'Sets' },

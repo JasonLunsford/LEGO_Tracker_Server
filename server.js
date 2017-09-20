@@ -1,13 +1,19 @@
-let express = require("express");
-let mongoose = require("mongoose"),
-	Schema = mongoose.Schema;
-let cors = require("cors");
+const express = require('express');
+const mongoose = require('mongoose'),
+	  Schema = mongoose.Schema;
+const cors = require('cors');
+const bodyParser = require('body-parser');
+const querystring = require('querystring');
 
-let mongoDb = 'mongodb://localhost/lego_tracker';
+const mongoDb = 'mongodb://localhost/lego_tracker';
 
 // Enable express and CORS
-let app = express();
+const app = express();
 app.use(cors());
+
+// Parse incoming query strings and POST messages, convert into JSON
+app.use(bodyParser.urlencoded({ extended: false }));
+app.use(bodyParser.json());
 
 // Prepare routes
 let index = require('./routes/index');

@@ -1,5 +1,5 @@
-let mongoose = require("mongoose"),
-	Schema = mongoose.Schema;
+const mongoose = require('mongoose'),
+	  Schema = mongoose.Schema;
 
 // external data
 let ExternalIdSchema = new Schema({
@@ -13,5 +13,8 @@ let ColorsSchema = new Schema({
 	is_trans    : { type: Boolean, default: false },
 	external_ids: [ExternalIdSchema]
 });
+
+// Indexing all fields of type String, referenced as text
+ColorsSchema.index({'$**': 'text'});
 
 module.exports = mongoose.model('Colors', ColorsSchema, 'colors');

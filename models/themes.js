@@ -1,5 +1,5 @@
-let mongoose = require("mongoose"),
-	Schema = mongoose.Schema;
+const mongoose = require('mongoose'),
+	  Schema = mongoose.Schema;
 
 // external data
 let ExternalIdSchema = new Schema({
@@ -14,5 +14,8 @@ let ThemesSchema = new Schema({
 	set_count   : { type: Number, min: [0, 'Invalid set count'] },
 	external_ids: [ExternalIdSchema]
 });
+
+// Indexing all fields of type String, referenced as text
+ThemesSchema.index({'$**': 'text'});
 
 module.exports = mongoose.model('Themes', ThemesSchema, 'themes');
