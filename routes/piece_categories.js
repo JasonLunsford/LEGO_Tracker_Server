@@ -1,26 +1,43 @@
-let express = require("express");
-let router = express.Router();
+const express = require('express');
+const router = express.Router();
 
-let PieceCategories = require('../models/piece_categories');
+const PieceCategories = require('../models/piece_categories');
 
-let isValidId = require ('../utils/utils');
+const isValidId = require ('../utils/utils');
 
-router.get('/', (req, res) => {
-	PieceCategories.find((err, doc) => {
-		res.send(doc);
-	});
+router.get('/', async (req, res) => {
+	let query = req.query.q;
+	let categories;
+
+	if (query) {
+		// leverage mongodb indexing to search targeted fields
+		categories = await PieceCategories.find({$text: {$search: query}}).exec();
+	} else {
+		// no query passed, return all piece categories
+		categories = await PieceCategories.find().exec();
+	}
+
+	if (categories.length === 0) {
+		res.status(404).send([{status: 404, error: 'No results matching that search term'}]);
+	}
+
+	res.send(categories);
 });
 
-router.get('/:id', (req, res) => {
+router.get('/:id', async (req, res) => {
 	let pieceCatId = req.params.id;
 
 	if (!isValidId(pieceCatId)) {
-		res.status(500).send({status: 500, error: 'Invalid id'});
+		res.status(404).send({status: 404, error: 'Id not found'});
 	}
 
-	PieceCategories.findById(pieceCatId, (err, doc) => {
-		res.send(doc);
-	});
+	let category = await PieceCategories.findById(pieceCatId).exec();
+
+	if (category === null) {
+		res.status(404).send({status: 404, error: 'Id not found'});
+	} 
+
+	res.send(category);
 });
 
 module.exports = router;

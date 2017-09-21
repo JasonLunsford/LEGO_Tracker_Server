@@ -1,28 +1,50 @@
-let express = require("express");
-let router = express.Router();
+const express = require('express');
+const router = express.Router();
 
-let UserSets = require('../models/user_sets');
+const UserSets = require('../models/user_sets');
 
-let isValidId = require ('../utils/utils');
+const isValidId = require ('../utils/utils');
 
-router.get('/', (req, res) => {
-	// UserSets.find((err, doc) => {
-	// 	res.send(doc);
-	// });
+router.get('/', async (req, res) => {
+	let query = req.query.q;
+	// let userSets;
+
+	// if (query) {
+	// 	// leverage mongodb indexing to search targeted fields
+	// 	userSets = await UserSets.find({$text: {$search: query}}).exec();
+	// } else {
+	// 	// no query passed, return all user sets
+	// 	userSets = await UserSets.find().exec();
+	// }
+
+	// if (userSets.length === 0) {
+	// 	res.status(404).send([{status: 404, error: 'No results matching that search term'}]);
+	// }
+
+	// res.send(userSets);
+
+	if (query) {
+		res.send(`NOT IMPLEMENTED: User Sets GET, query string: ${query}`);
+	}
 	res.send('NOT IMPLEMENTED: User Sets GET');
 });
 
-router.get('/:id', (req, res) => {
+router.get('/:id', async (req, res) => {
 	// let userSetId = req.params.id;
 
 	// if (!isValidId(userSetId)) {
-	// 	res.status(500).send({status: 500, error: 'Invalid id'});
+	// 	res.status(404).send({status: 404, error: 'Id not found'});
 	// }
 
-	// UserSets.findById(userSetId, (err, doc) => {
-	// 	res.send(doc);
-	// });
-	res.send('NOT IMPLEMENTED: User Set GET, ID: ' + req.params.id);
+	// let userSet = await UserSets.findById(userSetId).exec();
+
+	// if (userSet === null) {
+	// 	res.status(404).send({status: 404, error: 'Id not found'});
+	// } 
+
+	// res.send(userSet);
+
+	res.send(`NOT IMPLEMENTED: User Set GET, ID: ${req.params.id}`);
 });
 
 module.exports = router;

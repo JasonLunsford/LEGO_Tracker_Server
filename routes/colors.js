@@ -1,26 +1,43 @@
-let express = require("express");
-let router = express.Router();
+const express = require('express');
+const router = express.Router();
 
-let Colors = require('../models/colors');
+const Colors = require('../models/colors');
 
-let isValidId = require ('../utils/utils');
+const isValidId = require ('../utils/utils');
 
-router.get('/', (req, res) => {
-	Colors.find((err, doc) => {
-		res.send(doc);
-	});
+router.get('/', async (req, res) => {
+	let query = req.query.q;
+	let colors;
+
+	if (query) {
+		// leverage mongodb indexing to search targeted fields
+		colors = await Colors.find({$text: {$search: query}}).exec();
+	} else {
+		// no query passed, return all colors
+		colors = await Colors.find().exec();
+	}
+
+	if (colors.length === 0) {
+		res.status(404).send([{status: 404, error: 'No results matching that search term'}]);
+	}
+
+	res.send(colors);
 });
 
-router.get('/:id', (req, res) => {
+router.get('/:id', async (req, res) => {
 	let colorId = req.params.id;
 
 	if (!isValidId(colorId)) {
-		res.status(500).send({status: 500, error: 'Invalid id'});
+		res.status(404).send({status: 404, error: 'Id not found'});
 	}
 
-	Colors.findById(colorId, (err, doc) => {
-		res.send(doc);
-	});
+	let color = await Colors.findById(colorId).exec();
+
+	if (color === null) {
+		res.status(404).send({status: 404, error: 'Id not found'});
+	} 
+
+	res.send(color);
 });
 
 module.exports = router;
