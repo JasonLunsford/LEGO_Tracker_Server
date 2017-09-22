@@ -18,7 +18,7 @@ router.get('/', async (req, res) => {
 	}
 
 	if (categories.length === 0) {
-		res.status(404).send([{status: 404, error: 'No results matching that search term'}]);
+		res.status(404).send([{status: 404, msg: 'No results matching that search term'}]);
 	}
 
 	res.send(categories);
@@ -28,13 +28,13 @@ router.get('/:id', async (req, res) => {
 	let pieceCatId = req.params.id;
 
 	if (!isValidId(pieceCatId)) {
-		res.status(404).send({status: 404, error: 'Id not found'});
+		res.status(404).send({status: 404, msg: 'Id not found'});
 	}
 
 	let category = await PieceCategories.findById(pieceCatId).exec();
 
 	if (category === null) {
-		res.status(404).send({status: 404, error: 'Id not found'});
+		res.status(404).send({status: 404, msg: 'Id not found'});
 	} 
 
 	res.send(category);

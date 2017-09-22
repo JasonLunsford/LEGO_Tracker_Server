@@ -18,7 +18,7 @@ router.get('/', async (req, res) => {
 	}
 
 	if (themes.length === 0) {
-		res.status(404).send([{status: 404, error: 'No results matching that search term'}]);
+		res.status(404).send([{status: 404, msg: 'No results matching that search term'}]);
 	}
 
 	res.send(themes);
@@ -28,13 +28,13 @@ router.get('/:id', async (req, res) => {
 	let themeId = req.params.id;
 
 	if (!isValidId(themeId)) {
-		res.status(404).send({status: 404, error: 'Id not found'});
+		res.status(404).send({status: 404, msg: 'Id not found'});
 	}
 
 	let theme = await Themes.findById(themeId).exec();
 
 	if (theme === null) {
-		res.status(404).send({status: 404, error: 'Id not found'});
+		res.status(404).send({status: 404, msg: 'Id not found'});
 	} 
 
 	res.send(theme);

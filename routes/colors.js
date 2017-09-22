@@ -18,7 +18,7 @@ router.get('/', async (req, res) => {
 	}
 
 	if (colors.length === 0) {
-		res.status(404).send([{status: 404, error: 'No results matching that search term'}]);
+		res.status(404).send([{status: 404, msg: 'No results matching that search term'}]);
 	}
 
 	res.send(colors);
@@ -28,13 +28,13 @@ router.get('/:id', async (req, res) => {
 	let colorId = req.params.id;
 
 	if (!isValidId(colorId)) {
-		res.status(404).send({status: 404, error: 'Id not found'});
+		res.status(404).send({status: 404, msg: 'Id not found'});
 	}
 
 	let color = await Colors.findById(colorId).exec();
 
 	if (color === null) {
-		res.status(404).send({status: 404, error: 'Id not found'});
+		res.status(404).send({status: 404, msg: 'Id not found'});
 	} 
 
 	res.send(color);

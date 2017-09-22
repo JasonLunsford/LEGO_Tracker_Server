@@ -18,7 +18,7 @@ router.get('/', async (req, res) => {
 	// }
 
 	// if (userSets.length === 0) {
-	// 	res.status(404).send([{status: 404, error: 'No results matching that search term'}]);
+	// 	res.status(404).send([{status: 404, msg: 'No results matching that search term'}]);
 	// }
 
 	// res.send(userSets);
@@ -33,13 +33,13 @@ router.get('/:id', async (req, res) => {
 	// let userSetId = req.params.id;
 
 	// if (!isValidId(userSetId)) {
-	// 	res.status(404).send({status: 404, error: 'Id not found'});
+	// 	res.status(404).send({status: 404, msg: 'Id not found'});
 	// }
 
 	// let userSet = await UserSets.findById(userSetId).exec();
 
 	// if (userSet === null) {
-	// 	res.status(404).send({status: 404, error: 'Id not found'});
+	// 	res.status(404).send({status: 404, msg: 'Id not found'});
 	// } 
 
 	// res.send(userSet);

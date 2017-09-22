@@ -18,7 +18,7 @@ router.get('/', async (req, res) => {
 	// }
 
 	// if (pieces.length === 0) {
-	// 	res.status(404).send([{status: 404, error: 'No results matching that search term'}]);
+	// 	res.status(404).send([{status: 404, msg: 'No results matching that search term'}]);
 	// }
 
 	// res.send(pieces);
@@ -33,13 +33,13 @@ router.get('/:id', async (req, res) => {
 	// let pieceId = req.params.id;
 
 	// if (!isValidId(pieceId)) {
-	// 	res.status(404).send({status: 404, error: 'Id not found'});
+	// 	res.status(404).send({status: 404, msg: 'Id not found'});
 	// }
 
 	// let piece = await Pieces.findById(pieceId).exec();
 
 	// if (piece === null) {
-	// 	res.status(404).send({status: 404, error: 'Id not found'});
+	// 	res.status(404).send({status: 404, msg: 'Id not found'});
 	// } 
 
 	// res.send(piece);
@@ -48,11 +48,33 @@ router.get('/:id', async (req, res) => {
 });
 
 router.post('/', async (req, res) => {
-	// create a Piece mongoose instance
-	// run findOne using that instance to determine if piece exists
-	// write a callback (within this route) to run in the .exec()
-	// callback will redirect (if piece exists) or saves
-	res.send({msg: 'thank you'});
+	let payload = JSON.parse(req.body.payload);
+
+	let newPiece = new Pieces({
+		piece_num     : payload.piece_num,
+		element_num   : payload.element_num,
+		year_from     : payload.year_from,
+		year_to       : payload.year_to,
+		name          : payload.name,
+		weight        : payload.weight,
+		piece_img_urls: payload.piece_img_urls,
+		variations    : payload.variations,
+		color_ids     : payload.color_ids
+	});
+
+	let findPiece = await Pieces.findOne({'piece_num': payload.piece_num}).exec();
+
+	if (findPiece) {
+		res.status(418).send({status: 418, msg: 'Piece already exists.'});
+	}
+
+	newPiece.save(err => {
+		if (err) {
+			res.status(422).send({status: 422, msg: 'Save failed.', err});
+		} else {
+			res.status(200).send({status:200, msg: 'Save successful.'});
+		}
+	});
 });
 
 module.exports = router;
