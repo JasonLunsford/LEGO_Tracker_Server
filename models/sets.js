@@ -15,8 +15,8 @@ let SetPiecesSchema = new Schema({
 let SetsSchema = new Schema({
 	theme_id    : { type: Schema.ObjectId, required: true, ref: 'Themes' },
 	year        : { type: Number, min: [1958, 'Invalid year'], max: [9999, 'Invalid year'] },
-	piece_num   : { type: Number, min: [0, 'Invalid piece number'] },
-	minifig_num : { type: Number, min: [0, 'Invalid number of mini-figures'] },
+	num_pieces  : { type: Number, min: [0, 'Invalid number of pieces'] },
+	num_minifig : { type: Number, min: [0, 'Invalid number of mini-figures'] },
 	set_num     : { type: String, required: true, lowercase: true, trim: true },
 	name        : { type: String, required: true, lowercase: true, trim: true },
 	set_img_urls: [UrlsSchema],

@@ -3,7 +3,7 @@ const mongoose = require('mongoose'),
 
 let UserSetsSchema = new Schema({
 	set_id   : { type: Schema.ObjectId, required: true, ref: 'Sets' },
-	owned_num: { type: Number, min: [0, 'Invalid owned number'] },
+	num_owned: { type: Number, min: [0, 'Invalid number of sets owned'] },
 	rating   : { type: Number, min: 0, max: 5 },
 	comments : { type: String, trim: true },
 	assembled: { type: Boolean, default: false },
