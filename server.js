@@ -18,6 +18,7 @@ app.use(bodyParser.json());
 // Prepare routes
 let index = require('./routes/index');
 let colors = require('./routes/colors');
+let elements = require('./routes/elements');
 let pieces = require('./routes/pieces');
 let piece_categories = require('./routes/piece_categories');
 let sets = require('./routes/sets');
@@ -27,6 +28,7 @@ let user_sets = require('./routes/user_sets');
 // Use routes
 app.use('/', index);
 app.use('/colors', colors);
+app.use('/elements', elements);
 app.use('/pieces', pieces);
 app.use('/piece_categories', piece_categories);
 app.use('/sets', sets);

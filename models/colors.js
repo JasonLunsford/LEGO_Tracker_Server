@@ -8,10 +8,10 @@ let ExternalIdSchema = new Schema({
 });
 
 let ColorsSchema = new Schema({
-	name        : { type: String, required: true, trim: true },
-	rgb         : { type: String, required: true, lowercase: true, trim: true },
+	external_ids: [ExternalIdSchema],
 	is_trans    : { type: Boolean, default: false },
-	external_ids: [ExternalIdSchema]
+	name        : { type: String, required: true, trim: true },
+	rgb         : { type: String, required: true, lowercase: true, trim: true }
 });
 
 // Indexing all fields of type String, referenced as text

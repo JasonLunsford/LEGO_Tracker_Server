@@ -2,13 +2,13 @@ const mongoose = require('mongoose'),
 	  Schema = mongoose.Schema;
 
 let UserSetsSchema = new Schema({
-	set_id   : { type: Schema.ObjectId, required: true, ref: 'Sets' },
+	added    : { type: Date, default: Date.now },
+	assembled: { type: Boolean, default: false },
+	comments : { type: String, trim: true },
+	deleted  : { type: Boolean, default: false },
 	num_owned: { type: Number, min: [0, 'Invalid number of sets owned'] },
 	rating   : { type: Number, min: 0, max: 5 },
-	comments : { type: String, trim: true },
-	assembled: { type: Boolean, default: false },
-	added    : { type: Date, default: Date.now },
-	deleted  : { type: Boolean, default: false }
+	set_id   : { type: Object, required: true }
 });
 
 module.exports = mongoose.model('UserSets', UserSetsSchema, 'user_sets');

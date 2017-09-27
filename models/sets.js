@@ -8,20 +8,20 @@ let UrlsSchema = new Schema({
 });
 
 let SetPiecesSchema = new Schema({
-	piece_id    : { type: Schema.ObjectId, ref: 'Pieces' },
-	color_id    : { type: Schema.ObjectId, ref: 'Colors' }
+	element_id  : { type: Object },
+	quantity    : { type: Number, min: [0, 'Invalid quantity number'] }
 });
 
 let SetsSchema = new Schema({
-	theme_id    : { type: Schema.ObjectId, required: true, ref: 'Themes' },
-	year        : { type: Number, min: [1958, 'Invalid year'], max: [9999, 'Invalid year'] },
-	num_pieces  : { type: Number, min: [0, 'Invalid number of pieces'] },
-	num_minifig : { type: Number, min: [0, 'Invalid number of mini-figures'] },
-	set_num     : { type: String, required: true, lowercase: true, trim: true },
-	name        : { type: String, required: true, lowercase: true, trim: true },
-	set_img_urls: [UrlsSchema],
 	build_urls  : [UrlsSchema],
-	set_pieces  : [SetPiecesSchema]
+	name        : { type: String, required: true, lowercase: true, trim: true },
+	num_minifig : { type: Number, min: [0, 'Invalid number of mini-figures'], default: 0 },
+	num_pieces  : { type: Number, min: [0, 'Invalid number of pieces'] },
+	set_img_urls: [UrlsSchema],
+	set_num     : { type: String, required: true, lowercase: true, trim: true },
+	set_pieces  : [SetPiecesSchema],
+	theme_id    : { type: Object, required: true },
+	year        : { type: Number, min: [1958, 'Invalid year'], max: [9999, 'Invalid year'] }
 });
 
 // Indexing all fields of type String, referenced as text

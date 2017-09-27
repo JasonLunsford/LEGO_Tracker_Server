@@ -57,34 +57,26 @@ router.post('/', async (req, res) => {
 
 	if (findPiece) {
 		res.status(418).send({status: 418, msg: 'Piece already exists.'});
-	}
-
-	let newPiece = new Pieces({
-		piece_cat_id  : mongoose.Types.ObjectId(payload.piece_cat_id),
-		piece_num     : payload.piece_num,
-		year_from     : payload.year_from,
-		year_to       : payload.year_to,
-		name          : payload.name,
-		weight        : payload.weight,
-		variations    : payload.variations,
-		elements      : []
-	});
-
-	payload.elements.forEach(element => {
-		newPiece.elements.push({
-			element_num: element.element_num,
-			color_id   : mongoose.Types.ObjectId(element.color_id),
-			url        : element.url
+	} else {
+		let newPiece = new Pieces({
+			name        : payload.name,
+			piece_cat_id: mongoose.Types.ObjectId(payload.piece_cat_id),
+			piece_num   : payload.piece_num,
+			piece_urls  : payload.piece_urls,
+			variations  : payload.variations,
+			weight      : payload.weight,
+			year_from   : payload.year_from,
+			year_to     : payload.year_to
 		});
-	});
 
-	newPiece.save(err => {
-		if (err) {
-			res.status(422).send({status: 422, msg: 'Save failed.', err});
-		} else {
-			res.status(200).send({status:200, msg: 'Save successful.'});
-		}
-	});
+		newPiece.save(err => {
+			if (err) {
+				res.status(422).send({status: 422, msg: 'Save failed.', err});
+			} else {
+				res.status(200).send({status:200, msg: 'Save successful.'});
+			}
+		});
+	}
 });
 
 module.exports = router;

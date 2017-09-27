@@ -8,9 +8,9 @@ let ExternalIdSchema = new Schema({
 });
 
 let PieceCategoriesSchema = new Schema({
+	external_ids: [ExternalIdSchema],
 	name        : { type: String, required: true, trim: true },
-	piece_count : { type: Number, min: [1, 'Invalid piece count'] },
-	external_ids: [ExternalIdSchema]
+	piece_count : { type: Number, min: [1, 'Invalid piece count'] }
 });
 
 // Indexing all fields of type String, referenced as text
