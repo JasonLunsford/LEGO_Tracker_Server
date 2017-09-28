@@ -64,7 +64,6 @@ router.post('/', async (req, res) => {
 			piece_num   : payload.piece_num,
 			piece_urls  : payload.piece_urls,
 			variations  : payload.variations,
-			weight      : payload.weight,
 			year_from   : payload.year_from,
 			year_to     : payload.year_to
 		});

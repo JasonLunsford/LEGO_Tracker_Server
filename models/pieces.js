@@ -13,7 +13,7 @@ let PiecesSchema = new Schema({
 	piece_num   : { type: String, required: true, lowercase: true, trim: true },
 	piece_urls  : [UrlsSchema],
 	variations  : [{ type: String, min: [0, 'Invalid piece number'] }],
-	weight      : { type: String, lowercase: true, trim: true, default: '0g' },
+	weight      : { type: String, lowercase: true, trim: true, default: '0.0g' },
 	year_from   : { type: Number, min: [1958, 'Invalid year'], max: [9999, 'Invalid year'] },
 	year_to     : { type: Number, min: [1958, 'Invalid year'], max: [9999, 'Invalid year'] }
 });
