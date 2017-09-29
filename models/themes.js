@@ -1,6 +1,13 @@
 const mongoose = require('mongoose'),
 	  Schema = mongoose.Schema;
 
+/***********
+* Field Definitions:
+*
+* set_count: number of sets belonging to this theme (some themes are umbrellas, 
+*            with no sets only child themes)
+***********/
+
 // external data
 let ExternalIdSchema = new Schema({
 	source      : { type: String, lowercase: true, trim: true },

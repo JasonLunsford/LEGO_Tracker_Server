@@ -1,6 +1,13 @@
 const mongoose = require('mongoose'),
 	  Schema = mongoose.Schema;
 
+/***********
+* Field Definitions:
+*
+* is_trans: is a transparent or translucent piece, aka not a solid color
+* rgb: color value in hex format
+***********/
+
 // external data
 let ExternalIdSchema = new Schema({
 	color_id    : { type: Number, min: [0, 'Invalid color id'] },

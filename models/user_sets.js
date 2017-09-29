@@ -1,6 +1,15 @@
 const mongoose = require('mongoose'),
 	  Schema = mongoose.Schema;
 
+/***********
+* Field Definitions:
+*
+* rating: a rating value, maybe star based?
+* deleted: will register a set as deleted, but will not actually delete set from db
+* comments: user supplied comments about the set
+* assembled: whether the set is or has been assembled...i guess?
+***********/
+
 let UserSetsSchema = new Schema({
 	added    : { type: Date, default: Date.now },
 	assembled: { type: Boolean, default: false },

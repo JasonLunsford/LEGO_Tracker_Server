@@ -59,11 +59,13 @@ router.post('/', async (req, res) => {
 		res.status(418).send({status: 418, msg: 'Piece already exists.'});
 	} else {
 		let newPiece = new Pieces({
+			alternates  : payload.alternates,
+			molds       : payload.molds,
 			name        : payload.name,
 			piece_cat_id: mongoose.Types.ObjectId(payload.piece_cat_id),
 			piece_num   : payload.piece_num,
 			piece_urls  : payload.piece_urls,
-			variations  : payload.variations,
+			prints      : payload.prints,
 			year_from   : payload.year_from,
 			year_to     : payload.year_to
 		});

@@ -1,6 +1,12 @@
 const mongoose = require('mongoose'),
 	  Schema = mongoose.Schema;
 
+/***********
+* Field Definitions:
+*
+* piece_count: number of pieces belonging to this category
+***********/
+
 // external data
 let ExternalIdSchema = new Schema({
 	cat_id      : { type: Number, min: [0, 'Invalid piece category id'] },

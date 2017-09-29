@@ -12,7 +12,7 @@ let ElementsSchema = new Schema({
 	element_num : { type: String, required: true, lowercase: true, trim: true },
 	element_urls: [UrlsSchema],
 	num_sets    : { type: Number, min: [0, 'Invalid number of sets'] },
-	part_id     : { type: Object, required: true },
+	piece_id    : { type: Object, required: true },
 	price       : { type: String, lowercase: true, trim: true, default: '$0.00' }
 });
 

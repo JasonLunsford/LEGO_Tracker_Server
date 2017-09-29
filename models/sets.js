@@ -1,6 +1,13 @@
 const mongoose = require('mongoose'),
 	  Schema = mongoose.Schema;
 
+/***********
+* Field Definitions:
+*
+* build_urls: collection of set build instructions possible with this specific set
+* num_minifig: the number of mini-figures found in this set, if any
+***********/
+
 // external data
 let UrlsSchema = new Schema({
 	source      : { type: String, lowercase: true, trim: true },
