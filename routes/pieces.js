@@ -25,29 +25,22 @@ router.get('/', async (req, res) => {
 	}
 
 	res.send(pieces);
-
-	// if (query) {
-	// 	res.send(`NOT IMPLEMENTED: Pieces GET, query string: ${query}`);
-	// }
-	// res.send('NOT IMPLEMENTED: Pieces GET');
 });
 
 router.get('/:id', async (req, res) => {
-	// let pieceId = req.params.id;
+	let pieceId = req.params.id;
 
-	// if (!isValidId(pieceId)) {
-	// 	res.status(404).send({status: 404, msg: 'Id not found'});
-	// }
+	if (!isValidId(pieceId)) {
+		res.status(404).send({status: 404, msg: 'Id not found'});
+	}
 
-	// let piece = await Pieces.findById(pieceId).exec();
+	let piece = await Pieces.findById(pieceId).exec();
 
-	// if (piece === null) {
-	// 	res.status(404).send({status: 404, msg: 'Id not found'});
-	// } 
+	if (piece === null) {
+		res.status(404).send({status: 404, msg: 'Id not found'});
+	} 
 
-	// res.send(piece);
-
-	res.send(`NOT IMPLEMENTED: Piece GET, ID: ${req.params.id}`);
+	res.send(piece);
 });
 
 router.post('/', async (req, res) => {
@@ -72,12 +65,53 @@ router.post('/', async (req, res) => {
 
 		newPiece.save(err => {
 			if (err) {
-				res.status(422).send({status: 422, msg: 'Save failed.', err});
+				res.status(422).send({
+					status: 422, 
+					msg: 'Save of ' + payload.name + ' failed.'
+				}).json(err);
 			} else {
-				res.status(200).send({status:200, msg: 'Save successful.'});
+				res.status(200).send({
+					status:200, 
+					msg: payload.name + ' saved successfully.'
+				});
 			}
 		});
 	}
+});
+
+router.put('/:id', async (req, res) => {
+	let pieceId = req.params.id;
+	let payload = JSON.parse(req.body.payload);
+	
+	Pieces.findByIdAndUpdate(
+		pieceId,
+		{
+			$set: {
+				alternates  : payload.alternates,
+				molds       : payload.molds,
+				prints      : payload.prints,
+				year_from   : payload.year_from,
+				year_to     : payload.year_to
+			}
+		},
+		{
+			new: true,
+			runValidators: true
+		})
+	.exec((err, piece) => {
+		if (err) {
+			res.status(422).send({
+				status: 422, 
+				msg: 'Update of ' + payload.name + ' failed.'
+			}).json(err);
+		} else {
+			res.status(200).send({
+				status:200, 
+				msg: payload.name + ' saved successfully.',
+				piece
+			});
+		}
+	});
 });
 
 module.exports = router;
