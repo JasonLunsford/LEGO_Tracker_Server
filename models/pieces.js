@@ -25,8 +25,8 @@ let PiecesSchema = new Schema({
 	piece_urls  : [UrlsSchema],
 	prints      : [{ type: String, lowercase: true, trim: true }],
 	weight      : { type: String, lowercase: true, trim: true, default: '0.0g' },
-	year_from   : { type: Number, min: [1958, 'Invalid year'], max: [9999, 'Invalid year'] },
-	year_to     : { type: Number, min: [1958, 'Invalid year'], max: [9999, 'Invalid year'] }
+	year_from   : { type: Number, min: [0, 'Invalid year'], max: [9999, 'Invalid year'] },
+	year_to     : { type: Number, min: [0, 'Invalid year'], max: [9999, 'Invalid year'] }
 });
 
 // Indexing all fields of type String, referenced as text

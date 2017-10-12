@@ -9,26 +9,34 @@ const Pieces = require('../models/pieces');
 const isValidId = require ('../utils/utils');
 
 router.get('/', async (req, res) => {
-	let query = req.query.q;
+	const query = req.query.q;
+	const queryCount = req.query.count;
 	let pieces;
+	let piecesCount = 0;
 
-	if (query) {
-		// leverage mongodb indexing to search targeted fields
-		pieces = await Pieces.find({$text: {$search: query}}).exec();
+	if (queryCount === 'true') {
+		piecesCount = await Pieces.find().where('year_from').gte(0).count().exec();
+
+		res.send({ count: piecesCount });
 	} else {
-		// no query passed, return all pieces
-		pieces = await Pieces.find().exec();
-	}
+		if (query) {
+			// leverage mongodb indexing to search targeted fields
+			pieces = await Pieces.find( { $text: { $search: query } } ).exec();
+		} else {
+			// no query passed, return all pieces
+			pieces = await Pieces.find().exec();
+		}
 
-	if (pieces.length === 0) {
-		res.status(404).send([{status: 404, msg: 'No results matching that search term'}]);
-	}
+		if (pieces.length === 0) {
+			res.status(404).send([{status: 404, msg: 'No results matching that search term'}]);
+		}
 
-	res.send(pieces);
+		res.send(pieces);
+	}
 });
 
 router.get('/:id', async (req, res) => {
-	let pieceId = req.params.id;
+	const pieceId = req.params.id;
 
 	if (!isValidId(pieceId)) {
 		res.status(404).send({status: 404, msg: 'Id not found'});
@@ -44,7 +52,7 @@ router.get('/:id', async (req, res) => {
 });
 
 router.post('/', async (req, res) => {
-	let payload = JSON.parse(req.body.payload);
+	const payload = JSON.parse(req.body.payload);
 
 	let findPiece = await Pieces.findOne({'piece_num': payload.piece_num}).exec();
 
@@ -68,10 +76,10 @@ router.post('/', async (req, res) => {
 				res.status(422).send({
 					status: 422, 
 					msg: 'Save of ' + payload.name + ' failed.'
-				}).json(err);
+				});
 			} else {
 				res.status(200).send({
-					status:200, 
+					status: 200, 
 					msg: payload.name + ' saved successfully.'
 				});
 			}
@@ -80,8 +88,8 @@ router.post('/', async (req, res) => {
 });
 
 router.put('/:id', async (req, res) => {
-	let pieceId = req.params.id;
-	let payload = JSON.parse(req.body.payload);
+	const pieceId = req.params.id;
+	const payload = JSON.parse(req.body.payload);
 	
 	Pieces.findByIdAndUpdate(
 		pieceId,
@@ -102,11 +110,12 @@ router.put('/:id', async (req, res) => {
 		if (err) {
 			res.status(422).send({
 				status: 422, 
-				msg: 'Update of ' + payload.name + ' failed.'
-			}).json(err);
+				msg: 'Update of ' + payload.name + ' failed.',
+				err
+			});
 		} else {
 			res.status(200).send({
-				status:200, 
+				status: 200, 
 				msg: payload.name + ' saved successfully.',
 				piece
 			});
