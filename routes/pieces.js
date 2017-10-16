@@ -15,7 +15,7 @@ router.get('/', async (req, res) => {
 	let piecesCount = 0;
 
 	if (queryCount === 'true') {
-		piecesCount = await Pieces.find().where('year_from').gte(0).count().exec();
+		piecesCount = await Pieces.find().count().exec();
 
 		res.send({ count: piecesCount });
 	} else {

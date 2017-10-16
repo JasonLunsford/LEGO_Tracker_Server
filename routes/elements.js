@@ -9,53 +9,80 @@ const Elements = require('../models/elements');
 const isValidId = require ('../utils/utils');
 
 router.get('/', async (req, res) => {
-	let query = req.query.q;
+	const query = req.query.q;
+	const queryCount = req.query.count;
 	let elements;
+	let elementsCount = 0;
 
-	// if (query) {
-	// 	// leverage mongodb indexing to search targeted fields
-	// 	elements = await Elements.find({$text: {$search: query}}).exec();
-	// } else {
-	// 	// no query passed, return all elements
-	// 	elements = await Elements.find().exec();
-	// }
+	if (queryCount === 'true') {
+		elementsCount = await Elements.find().count().exec();
 
-	// if (elements.length === 0) {
-	// 	res.status(404).send([{status: 404, msg: 'No results matching that search term'}]);
-	// }
+		res.send({ count: elementsCount });
+	} else {
+		if (query) {
+			// leverage mongodb indexing to search targeted fields
+			elements = await Elements.find( { $text: { $search: query } } ).exec();
+		} else {
+			// no query passed, return all elements
+			elements = await Elements.find().exec();
+		}
 
-	// res.send(elements);
+		if (elements.length === 0) {
+			res.status(404).send([{status: 404, msg: 'No results matching that search term'}]);
+		}
 
-	if (query) {
-		res.send(`NOT IMPLEMENTED: Elements GET, query string: ${query}`);
+		res.send(elements);
 	}
-	res.send('NOT IMPLEMENTED: Elements GET');
 });
 
 router.get('/:id', async (req, res) => {
-	// let elementId = req.params.id;
+	let elementId = req.params.id;
 
-	// if (!isValidId(elementId)) {
-	// 	res.status(404).send({status: 404, msg: 'Id not found'});
-	// }
+	if (!isValidId(elementId)) {
+		res.status(404).send({status: 404, msg: 'Id not found'});
+	}
 
-	// let element = await Elements.findById(elementId).exec();
+	let element = await Elements.findById(elementId).exec();
 
-	// if (element === null) {
-	// 	res.status(404).send({status: 404, msg: 'Id not found'});
-	// } 
+	if (element === null) {
+		res.status(404).send({status: 404, msg: 'Id not found'});
+	} 
 
-	// res.send(element);
-
-	res.send(`NOT IMPLEMENTED: Element GET, ID: ${req.params.id}`);
+	res.send(element);
 });
 
 router.post('/', async (req, res) => {
-	if (req.body.payload) {
-		let payload = JSON.parse(req.body.payload);
-		res.send(`NOT IMPLEMENTED: Element POST, body: ${payload}`);
+	const payload = JSON.parse(req.body.payload);
+
+	let findElement = await Elements.findOne({'element_num': payload.element_num}).exec();
+
+	if (findElement) {
+		res.status(418).send({status: 418, msg: 'Element already exists.'});
+	} else {
+		let newElement = new Elements({
+			color_id    : mongoose.Types.ObjectId(payload.color_id),
+			element_num : payload.element_num,
+			element_urls: payload.element_urls,
+			num_sets    : payload.num_sets,
+			piece_id    : mongoose.Types.ObjectId(payload.piece_id),
+			price       : payload.price,
+			num_usage   : payload.num_usage
+		});
+
+		newElement.save(err => {
+			if (err) {
+				res.status(422).send({
+					status: 422, 
+					msg: 'Save of ' + payload.name + ' failed.'
+				});
+			} else {
+				res.status(200).send({
+					status: 200, 
+					msg: payload.name + ' saved successfully.'
+				});
+			}
+		});
 	}
-	res.send('NOT IMPLEMENTED: Element POST');
 });
 
 module.exports = router;
