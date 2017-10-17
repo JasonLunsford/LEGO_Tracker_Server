@@ -20,8 +20,8 @@ let UrlsSchema = new Schema({
 });
 
 let ElementsSchema = new Schema({
-	color_id    : { type: Object, required: true },
-	element_num : { type: String, required: true, lowercase: true, trim: true },
+	color_id    : { type: Object },
+	element_num : { type: String, lowercase: true, trim: true },
 	element_urls: [UrlsSchema],
 	num_sets    : { type: Number, min: [0, 'Invalid number of sets'] },
 	piece_id    : { type: Object, required: true },

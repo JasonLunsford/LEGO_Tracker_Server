@@ -60,14 +60,20 @@ router.post('/', async (req, res) => {
 		res.status(418).send({status: 418, msg: 'Element already exists.'});
 	} else {
 		let newElement = new Elements({
-			color_id    : mongoose.Types.ObjectId(payload.color_id),
-			element_num : payload.element_num,
 			element_urls: payload.element_urls,
 			num_sets    : payload.num_sets,
+			num_usage   : payload.num_usage,
 			piece_id    : mongoose.Types.ObjectId(payload.piece_id),
-			price       : payload.price,
-			num_usage   : payload.num_usage
+			price       : payload.price
 		});
+
+		if (payload.color_id) {
+			newElement.color_id = mongoose.Types.ObjectId(payload.color_id);
+		}
+
+		if (payload.element_num) {
+			newElement.element_num = payload.element_num;
+		}
 
 		newElement.save(err => {
 			if (err) {
