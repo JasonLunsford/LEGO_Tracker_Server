@@ -54,41 +54,29 @@ router.get('/:id', async (req, res) => {
 router.post('/', async (req, res) => {
 	const payload = JSON.parse(req.body.payload);
 
-	let findElement = await Elements.findOne({'element_num': payload.element_num}).exec();
+	let newElement = new Elements({
+		color_id    : mongoose.Types.ObjectId(payload.color_id),
+		element_num : payload.element_num,
+		element_urls: payload.element_urls,
+		num_sets    : payload.num_sets,
+		num_usage   : payload.num_usage,
+		piece_id    : mongoose.Types.ObjectId(payload.piece_id)
+	});
 
-	if (findElement) {
-		res.status(418).send({status: 418, msg: 'Element already exists.'});
-	} else {
-		let newElement = new Elements({
-			element_urls: payload.element_urls,
-			num_sets    : payload.num_sets,
-			num_usage   : payload.num_usage,
-			piece_id    : mongoose.Types.ObjectId(payload.piece_id),
-			price       : payload.price
-		});
-
-		if (payload.color_id) {
-			newElement.color_id = mongoose.Types.ObjectId(payload.color_id);
+	newElement.save(err => {
+		let name = payload.element_num || 'Nameless One';
+		if (err) {
+			res.status(422).send({
+				status: 422, 
+				msg: 'Save of ' + name + ' failed.'
+			});
+		} else {
+			res.status(200).send({
+				status: 200, 
+				msg: name + ' saved successfully.'
+			});
 		}
-
-		if (payload.element_num) {
-			newElement.element_num = payload.element_num;
-		}
-
-		newElement.save(err => {
-			if (err) {
-				res.status(422).send({
-					status: 422, 
-					msg: 'Save of ' + payload.name + ' failed.'
-				});
-			} else {
-				res.status(200).send({
-					status: 200, 
-					msg: payload.name + ' saved successfully.'
-				});
-			}
-		});
-	}
+	});
 });
 
 module.exports = router;
