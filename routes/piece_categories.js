@@ -6,26 +6,34 @@ const PieceCategories = require('../models/piece_categories');
 const isValidId = require ('../utils/utils');
 
 router.get('/', async (req, res) => {
-	let query = req.query.q;
+	const query = req.query.q;
+	const queryCount = req.query.count;
 	let categories;
+	let categoriesCount = 0;
 
-	if (query) {
-		// leverage mongodb indexing to search targeted fields
-		categories = await PieceCategories.find({$text: {$search: query}}).exec();
+	if (queryCount === 'true') {
+		categoriesCount = await PieceCategories.find().count().exec();
+
+		res.send({ count: categoriesCount });
 	} else {
-		// no query passed, return all piece categories
-		categories = await PieceCategories.find().exec();
-	}
+		if (query) {
+			// leverage mongodb indexing to search targeted fields
+			categories = await PieceCategories.find({$text: {$search: query}}).exec();
+		} else {
+			// no query passed, return all piece categories
+			categories = await PieceCategories.find().exec();
+		}
 
-	if (categories.length === 0) {
-		res.status(404).send([{status: 404, msg: 'No results matching that search term'}]);
-	}
+		if (categories.length === 0) {
+			res.status(404).send([{status: 404, msg: 'No results matching that search term'}]);
+		}
 
-	res.send(categories);
+		res.send(categories);
+	}
 });
 
 router.get('/:id', async (req, res) => {
-	let pieceCatId = req.params.id;
+	const pieceCatId = req.params.id;
 
 	if (!isValidId(pieceCatId)) {
 		res.status(404).send({status: 404, msg: 'Id not found'});

@@ -6,26 +6,34 @@ const Themes = require('../models/themes');
 const isValidId = require ('../utils/utils');
 
 router.get('/', async (req, res) => {
-	let query = req.query.q;
+	const query = req.query.q;
+	const queryCount = req.query.count;
 	let themes;
+	let themesCount = 0;
 
-	if (query) {
-		// leverage mongodb indexing to search targeted fields
-		themes = await Themes.find({$text: {$search: query}}).exec();
+	if (queryCount === 'true') {
+		themesCount = await Themes.find().count().exec();
+
+		res.send({ count: themesCount });
 	} else {
-		// no query passed, return all themes
-		themes = await Themes.find().exec();
-	}
+		if (query) {
+			// leverage mongodb indexing to search targeted fields
+			themes = await Themes.find({$text: {$search: query}}).exec();
+		} else {
+			// no query passed, return all themes
+			themes = await Themes.find().exec();
+		}
 
-	if (themes.length === 0) {
-		res.status(404).send([{status: 404, msg: 'No results matching that search term'}]);
-	}
+		if (themes.length === 0) {
+			res.status(404).send([{status: 404, msg: 'No results matching that search term'}]);
+		}
 
-	res.send(themes);
+		res.send(themes);
+	}
 });
 
 router.get('/:id', async (req, res) => {
-	let themeId = req.params.id;
+	const themeId = req.params.id;
 
 	if (!isValidId(themeId)) {
 		res.status(404).send({status: 404, msg: 'Id not found'});
