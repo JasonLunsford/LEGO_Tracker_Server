@@ -1,6 +1,9 @@
 const express = require('express');
 const router = express.Router();
 
+const mongoose = require('mongoose'),
+	  Schema = mongoose.Schema;
+
 const Sets = require('../models/sets');
 
 const isValidId = require ('../utils/utils');
@@ -51,28 +54,34 @@ router.get('/:id', async (req, res) => {
 router.post('/', async (req, res) => {
 	const payload = JSON.parse(req.body.payload);
 
-	let newSet = new Sets({
-		name        : payload.name,
-		num_pieces  : payload.num_pieces,
-		set_img_urls: payload.set_img_urls,
-		set_num     : payload.set_num,
-		theme_id    : mongoose.Types.ObjectId(payload.theme_id),
-		year        : payload.year
-	});
+	let findSet = await Sets.findOne({'set_num': payload.set_num}).exec();
 
-	newSet.save(err => {
-		if (err) {
-			res.status(422).send({
-				status: 422, 
-				msg: 'Save of ' + payload.name + ' failed.'
-			});
-		} else {
-			res.status(200).send({
-				status: 200, 
-				msg: payload.name + ' saved successfully.'
-			});
-		}
-	});
+	if (findSet) {
+		res.status(418).send({status: 418, msg: 'Set already exists.'});
+	} else {
+		let newSet = new Sets({
+			name        : payload.name,
+			num_pieces  : payload.num_pieces,
+			set_img_urls: payload.set_img_urls,
+			set_num     : payload.set_num,
+			theme_id    : mongoose.Types.ObjectId(payload.theme_id),
+			year        : payload.year
+		});
+
+		newSet.save(err => {
+			if (err) {
+				res.status(422).send({
+					status: 422, 
+					msg: 'Save of ' + payload.name + ' failed.'
+				});
+			} else {
+				res.status(200).send({
+					status: 200, 
+					msg: payload.name + ' saved successfully.'
+				});
+			}
+		});
+	}
 });
 
 module.exports = router;
