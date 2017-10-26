@@ -84,4 +84,36 @@ router.post('/', async (req, res) => {
 	}
 });
 
+router.put('/:id', async (req, res) => {
+	const setId = req.params.id;
+	const payload = JSON.parse(req.body.payload);
+	
+	Sets.findByIdAndUpdate(
+		setId,
+		{
+			$set: {
+				set_pieces  : payload.set_pieces
+			}
+		},
+		{
+			new: true,
+			runValidators: true
+		})
+	.exec((err, set) => {
+		if (err) {
+			res.status(422).send({
+				status: 422, 
+				msg: 'Update of ' + payload.name + ' failed.',
+				err
+			});
+		} else {
+			res.status(200).send({
+				status: 200, 
+				msg: payload.name + ' saved successfully.',
+				set
+			});
+		}
+	});
+});
+
 module.exports = router;

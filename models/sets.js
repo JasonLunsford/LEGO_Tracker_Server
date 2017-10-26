@@ -16,6 +16,7 @@ let UrlsSchema = new Schema({
 
 let SetPiecesSchema = new Schema({
 	element_id  : { type: Object },
+	is_spare    : { type: Boolean, default: false },
 	quantity    : { type: Number, min: [0, 'Invalid quantity number'] }
 });
 
