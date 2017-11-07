@@ -92,7 +92,10 @@ router.put('/:id', async (req, res) => {
 		setId,
 		{
 			$set: {
-				set_pieces  : payload.set_pieces
+				is_processed : true,
+				num_minifig  : payload.num_minifig || 0,
+				num_pieces   : payload.num_pieces,
+				set_pieces   : payload.set_pieces || []
 			}
 		},
 		{

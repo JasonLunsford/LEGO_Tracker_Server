@@ -28,6 +28,7 @@ let SetsSchema = new Schema({
 	alt_set_nums : [{ type: Object }],
 	build_urls   : [UrlsSchema],
 	has_gear     : { type: Boolean, default: false },
+	is_processed : { type: Boolean, default: false },
 	name         : { type: String, required: true, lowercase: true, trim: true },
 	members      : [{ type: Object }],
 	num_minifig  : { type: Number, min: [0, 'Invalid number of mini-figures'], default: 0 },
