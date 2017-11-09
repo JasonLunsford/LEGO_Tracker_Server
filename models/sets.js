@@ -10,7 +10,7 @@ const mongoose = require('mongoose'),
 * members: other sets belonging to this set (if this array populated set is now a collection)
 * num_minifig: the number of mini-figures found in this set, if any
 *
-* set_pieces: either get an element_id OR a part_id/color_id, depending on whether the piece
+* set_pieces: either get an element_id OR a piece_id/color_id, depending on whether the piece
 *             (is likely) a piece of minifigure. Minifigs pieces DO NOT have element_ids.
 ***********/
 
@@ -19,7 +19,7 @@ let SetPiecesSchema = new Schema({
 	color_id     : { type: Object, default: null },
 	element_id   : { type: Object, default: null },
 	is_spare     : { type: Boolean, default: false },
-	part_id      : { type: Object, default: null },
+	piece_id     : { type: Object, default: null },
 	quantity     : { type: Number, min: [0, 'Invalid quantity number'] }
 });
 
