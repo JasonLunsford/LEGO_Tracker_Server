@@ -9,7 +9,8 @@ const mongoose = require('mongoose'),
 * has_gear: flag if the set includes non-LEGO piece stuff like water bottles, frisbees, etc
 * members: other sets belonging to this set (if this array populated set is now a collection)
 * num_minifig: the number of mini-figures found in this set, if any
-*
+* num_pieces: the number of NON SPARE pieces
+* num_spares: the number of SPARE peices
 * set_pieces: either get an element_id OR a piece_id/color_id, depending on whether the piece
 *             (is likely) a piece of minifigure. Minifigs pieces DO NOT have element_ids.
 ***********/
@@ -38,6 +39,7 @@ let SetsSchema = new Schema({
 	members      : [{ type: Object }],
 	num_minifig  : { type: Number, min: [0, 'Invalid number of mini-figures'], default: 0 },
 	num_pieces   : { type: Number, min: [0, 'Invalid number of pieces'] },
+	num_spares   : { type: Number, default: 0 },
 	set_img_urls : [UrlsSchema],
 	set_num      : { type: String, required: true, lowercase: true, trim: true },
 	set_pieces   : [SetPiecesSchema],
