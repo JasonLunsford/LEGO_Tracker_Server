@@ -12,7 +12,11 @@ const app = express();
 app.use(cors());
 
 // Parse incoming query strings and POST messages, convert into JSON
-app.use(bodyParser.urlencoded({ extended: false }));
+app.use(bodyParser.urlencoded({
+	extended       : false,
+    parameterLimit : 100000,
+    limit          : '50mb'
+}));
 app.use(bodyParser.json());
 
 // Prepare routes

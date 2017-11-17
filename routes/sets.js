@@ -87,6 +87,19 @@ router.post('/', async (req, res) => {
 router.put('/:id', async (req, res) => {
 	const setId = req.params.id;
 	const payload = JSON.parse(req.body.payload);
+
+	const set_pieces = payload.set_pieces.map(piece => {
+		let color_id = (piece.color_id) ? mongoose.Types.ObjectId(piece.color_id) : null;
+		let element_id = (piece.element_id) ? mongoose.Types.ObjectId(piece.element_id) : null;
+
+		return {
+			color_id,
+			element_id,
+			is_spare : piece.is_spare,
+			piece_id : mongoose.Types.ObjectId(piece.piece_id),
+			quantity : piece.quantity
+		};
+	});
 	
 	Sets.findByIdAndUpdate(
 		setId,
@@ -95,7 +108,7 @@ router.put('/:id', async (req, res) => {
 				is_processed : payload.is_processed,
 				num_pieces   : payload.num_pieces,
 				num_spares   : payload.num_spares,
-				set_pieces   : payload.set_pieces
+				set_pieces
 			}
 		},
 		{
@@ -106,13 +119,13 @@ router.put('/:id', async (req, res) => {
 		if (err) {
 			res.status(422).send({
 				status: 422, 
-				msg: 'Update of ' + payload.name + ' failed.',
+				msg: 'Update failed.',
 				err
 			});
 		} else {
 			res.status(200).send({
 				status: 200, 
-				msg: payload.name + ' saved successfully.',
+				msg: 'Save successful.',
 				set
 			});
 		}
