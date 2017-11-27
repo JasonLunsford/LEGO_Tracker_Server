@@ -79,4 +79,40 @@ router.post('/', async (req, res) => {
 	});
 });
 
+router.put('/:id', async (req, res) => {
+	const elementId = req.params.id;
+	const payload = JSON.parse(req.body.payload);
+
+	Elements.findByIdAndUpdate(
+		elementId,
+		{
+			$set: {
+				color_id    : mongoose.Types.ObjectId(payload.color_id),
+				element_num : payload.element_num,
+				num_sets    : payload.num_sets,
+				price       : payload.price,
+				num_usage   : payload.num_usage
+			}
+		},
+		{
+			new: true,
+			runValidators: true
+		})
+	.exec((err, set) => {
+		if (err) {
+			res.status(422).send({
+				status: 422, 
+				msg: 'Update failed.',
+				err
+			});
+		} else {
+			res.status(200).send({
+				status: 200, 
+				msg: 'Save successful.',
+				set
+			});
+		}
+	});
+});
+
 module.exports = router;

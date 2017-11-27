@@ -29,9 +29,9 @@ router.get('/', async (req, res) => {
 
 		if (pieces.length === 0) {
 			res.status(404).send([{status: 404, msg: 'No results matching that search term'}]);
+		} else {
+			res.send(pieces);
 		}
-
-		res.send(pieces);
 	}
 });
 
