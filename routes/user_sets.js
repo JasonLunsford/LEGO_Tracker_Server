@@ -6,45 +6,46 @@ const UserSets = require('../models/user_sets');
 const isValidId = require ('../utils/utils');
 
 router.get('/', async (req, res) => {
-	let query = req.query.q;
-	// let userSets;
+    const query = req.query.q;
+    const queryCount = req.query.count;
+    let userSets;
+    let userSetsCount = 0;
 
-	// if (query) {
-	// 	// leverage mongodb indexing to search targeted fields
-	// 	userSets = await UserSets.find({$text: {$search: query}}).exec();
-	// } else {
-	// 	// no query passed, return all user sets
-	// 	userSets = await UserSets.find().exec();
-	// }
+    if (queryCount === 'true') {
+        userSetsCount = await UserSets.find().count().exec();
 
-	// if (userSets.length === 0) {
-	// 	res.status(404).send([{status: 404, msg: 'No results matching that search term'}]);
-	// }
+        res.send({ count: userSetsCount });
+    } else {
+        if (query) {
+            // leverage mongodb indexing to search targeted fields
+            userSets = await UserSets.find({$text: {$search: query}}).exec();
+        } else {
+            // no query passed, return all user sets
+            userSets = await UserSets.find().exec();
+        }
 
-	// res.send(userSets);
+        if (userSets.length === 0) {
+            res.status(404).send([{status: 404, msg: 'No results matching that search term'}]);
+        }
 
-	if (query) {
-		res.send(`NOT IMPLEMENTED: User Sets GET, query string: ${query}`);
-	}
-	res.send('NOT IMPLEMENTED: User Sets GET');
+        res.send(userSets);
+    }
 });
 
 router.get('/:id', async (req, res) => {
-	// let userSetId = req.params.id;
+    const userSetId = req.params.id;
 
-	// if (!isValidId(userSetId)) {
-	// 	res.status(404).send({status: 404, msg: 'Id not found'});
-	// }
+    if (!isValidId(userSetId)) {
+        res.status(404).send({status: 404, msg: 'Id not found'});
+    }
 
-	// let userSet = await UserSets.findById(userSetId).exec();
+    let useSet = await UserSets.findById(userSetId).exec();
 
-	// if (userSet === null) {
-	// 	res.status(404).send({status: 404, msg: 'Id not found'});
-	// } 
+    if (useSet === null) {
+        res.status(404).send({status: 404, msg: 'Id not found'});
+    }
 
-	// res.send(userSet);
-
-	res.send(`NOT IMPLEMENTED: User Set GET, ID: ${req.params.id}`);
+    res.send(useSet);
 });
 
 module.exports = router;

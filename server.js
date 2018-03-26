@@ -28,6 +28,7 @@ let piece_categories = require('./routes/piece_categories');
 let sets = require('./routes/sets');
 let themes = require('./routes/themes');
 let user_sets = require('./routes/user_sets');
+let status = require('./routes/status');
 
 // Use routes
 app.use('/', index);
@@ -38,6 +39,7 @@ app.use('/piece_categories', piece_categories);
 app.use('/sets', sets);
 app.use('/themes', themes);
 app.use('/user_sets', user_sets);
+app.use('/status', status);
 
 // Global failure route
 app.all('/*', (req, res) => {
@@ -50,5 +52,10 @@ let db = mongoose.connection;
 
 // Bind mongodb errors and send to console log
 db.on('error', console.error.bind(console, 'MongoDB connection error:'));
+
+// Catch random UnhandledRejection
+process.on('unhandledRejection', error => {
+    console.log('unhandledRejection: ', error.message);
+});
 
 app.listen(8181);
