@@ -24,9 +24,9 @@ router.get('/', async (req, res) => {
             userSets = await UserSets.find().exec();
         }
 
-        if (userSets.length === 0) {
-            res.status(404).send([{status: 404, msg: 'No results matching that search term'}]);
-        }
+        // if (userSets.length === 0) {
+        //     res.status(404).send([{status: 404, msg: 'No results matching that search term'}]);
+        // }
 
         res.send(userSets);
     }

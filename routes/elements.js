@@ -1,4 +1,7 @@
 const express = require('express');
+const redis = require('redis');
+
+const client = redis.createClient();
 const router = express.Router();
 
 const mongoose = require('mongoose'),
@@ -7,6 +10,14 @@ const mongoose = require('mongoose'),
 const Elements = require('../models/elements');
 
 const isValidId = require ('../utils/utils');
+
+const serveRequest = (res, items) => {
+	if (items.length === 0) {
+		res.status(404).send([{status: 404, msg: 'No results matching that search term'}]);
+	}
+
+	res.send(items);
+}
 
 router.get('/', async (req, res) => {
 	const query = req.query.q;
@@ -21,17 +32,23 @@ router.get('/', async (req, res) => {
 	} else {
 		if (query) {
 			// leverage mongodb indexing to search targeted fields
-			elements = await Elements.find( { $text: { $search: query } } ).exec();
+			result = await Elements.find( { $text: { $search: query } } ).exec();
+
+			serveRequest(res, result);
 		} else {
-			// no query passed, return all elements
-			elements = await Elements.find().exec();
-		}
+			// leverage Redis (redis-serve runs in background) for memcaching
+			client.get('allElements', (err, result) => {
+				if (result) {
+					serveRequest(res, result);
+				} else {
+					Elements.find().exec().then(result => {
+						client.setex('allElements', 3600, JSON.stringify(result));
 
-		if (elements.length === 0) {
-			res.status(404).send([{status: 404, msg: 'No results matching that search term'}]);
+						serveRequest(res, result);
+					});
+				}
+			});
 		}
-
-		res.send(elements);
 	}
 });
 
@@ -113,6 +130,10 @@ router.put('/:id', async (req, res) => {
 			});
 		}
 	});
+});
+
+client.on("error", function (err) {
+    console.log("Error " + err);
 });
 
 module.exports = router;
