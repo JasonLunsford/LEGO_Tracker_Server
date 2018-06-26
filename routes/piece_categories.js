@@ -1,4 +1,7 @@
 const express = require('express');
+const redis = require('redis');
+
+const client = redis.createClient();
 const router = express.Router();
 
 const PieceCategories = require('../models/piece_categories');
@@ -18,17 +21,23 @@ router.get('/', async (req, res) => {
 	} else {
 		if (query) {
 			// leverage mongodb indexing to search targeted fields
-			categories = await PieceCategories.find({$text: {$search: query}}).exec();
+			result = await PieceCategories.find( { $text: { $search: query } } ).exec();
+
+			Utils.serveRequest(res, result);
 		} else {
-			// no query passed, return all piece categories
-			categories = await PieceCategories.find().exec();
-		}
+			// leverage Redis (redis-serve runs in background) for memcaching
+			client.get('allPieceCategories', (err, result) => {
+				if (result) {
+					Utils.serveRequest(res, result);
+				} else {
+					PieceCategories.find().exec().then(result => {
+						client.setex('allPieceCategories', Utils.cacheTimeout, JSON.stringify(result));
 
-		if (categories.length === 0) {
-			res.status(404).send([{status: 404, msg: 'No results matching that search term'}]);
+						Utils.serveRequest(res, result);
+					});
+				}
+			});
 		}
-
-		res.send(categories);
 	}
 });
 

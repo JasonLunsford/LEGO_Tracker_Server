@@ -1,4 +1,7 @@
 const express = require('express');
+const redis = require('redis');
+
+const client = redis.createClient();
 const router = express.Router();
 
 const Themes = require('../models/themes');
@@ -18,17 +21,23 @@ router.get('/', async (req, res) => {
 	} else {
 		if (query) {
 			// leverage mongodb indexing to search targeted fields
-			themes = await Themes.find({$text: {$search: query}}).exec();
+			result = await Themes.find( { $text: { $search: query } } ).exec();
+
+			Utils.serveRequest(res, result);
 		} else {
-			// no query passed, return all themes
-			themes = await Themes.find().exec();
-		}
+			// leverage Redis (redis-serve runs in background) for memcaching
+			client.get('allThemes', (err, result) => {
+				if (result) {
+					Utils.serveRequest(res, result);
+				} else {
+					Themes.find().exec().then(result => {
+						client.setex('allThemes', Utils.cacheTimeout, JSON.stringify(result));
 
-		if (themes.length === 0) {
-			res.status(404).send([{status: 404, msg: 'No results matching that search term'}]);
+						Utils.serveRequest(res, result);
+					});
+				}
+			});
 		}
-
-		res.send(themes);
 	}
 });
 

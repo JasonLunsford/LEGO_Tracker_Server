@@ -11,14 +11,6 @@ const Elements = require('../models/elements');
 
 const Utils = require ('../utils/utils');
 
-const serveRequest = (res, items) => {
-	if (items.length === 0) {
-		res.status(404).send([{status: 404, msg: 'No results matching that search term'}]);
-	}
-
-	res.send(items);
-}
-
 router.get('/', async (req, res) => {
 	const query = req.query.q;
 	const queryCount = req.query.count;
@@ -34,17 +26,17 @@ router.get('/', async (req, res) => {
 			// leverage mongodb indexing to search targeted fields
 			result = await Elements.find( { $text: { $search: query } } ).exec();
 
-			serveRequest(res, result);
+			Utils.serveRequest(res, result);
 		} else {
 			// leverage Redis (redis-serve runs in background) for memcaching
 			client.get('allElements', (err, result) => {
 				if (result) {
-					serveRequest(res, result);
+					Utils.serveRequest(res, result);
 				} else {
 					Elements.find().exec().then(result => {
 						client.setex('allElements', Utils.cacheTimeout, JSON.stringify(result));
 
-						serveRequest(res, result);
+						Utils.serveRequest(res, result);
 					});
 				}
 			});

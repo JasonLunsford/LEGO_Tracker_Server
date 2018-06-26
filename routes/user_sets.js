@@ -1,9 +1,21 @@
 const express = require('express');
+const redis = require('redis');
+
+const client = redis.createClient();
 const router = express.Router();
 
 const UserSets = require('../models/user_sets');
 
 const Utils = require ('../utils/utils');
+
+const serveRequest = (res, items) => {
+    if (items.length === 0) {
+        // Commented to prevent 404 - No user sets in db yet
+        // res.status(404).send([{status: 404, msg: 'No results matching that search term'}]);
+    }
+
+    res.send(items);
+}
 
 router.get('/', async (req, res) => {
     const query = req.query.q;
@@ -18,17 +30,23 @@ router.get('/', async (req, res) => {
     } else {
         if (query) {
             // leverage mongodb indexing to search targeted fields
-            userSets = await UserSets.find({$text: {$search: query}}).exec();
+            result = await UserSets.find( { $text: { $search: query } } ).exec();
+
+            serveRequest(res, result);
         } else {
-            // no query passed, return all user sets
-            userSets = await UserSets.find().exec();
+            // leverage Redis (redis-serve runs in background) for memcaching
+            client.get('allUserSets', (err, result) => {
+                if (result) {
+                    serveRequest(res, result);
+                } else {
+                    UserSets.find().exec().then(result => {
+                        client.setex('allUserSets', Utils.cacheTimeout, JSON.stringify(result));
+
+                        serveRequest(res, result);
+                    });
+                }
+            });
         }
-
-        // if (userSets.length === 0) {
-        //     res.status(404).send([{status: 404, msg: 'No results matching that search term'}]);
-        // }
-
-        res.send(userSets);
     }
 });
 

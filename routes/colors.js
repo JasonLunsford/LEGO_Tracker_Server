@@ -1,4 +1,7 @@
 const express = require('express');
+const redis = require('redis');
+
+const client = redis.createClient();
 const router = express.Router();
 
 const Colors = require('../models/colors');
@@ -18,17 +21,23 @@ router.get('/', async (req, res) => {
     } else {
         if (query) {
             // leverage mongodb indexing to search targeted fields
-            colors = await Colors.find({$text: {$search: query}}).exec();
+            result = await Colors.find( { $text: { $search: query } } ).exec();
+
+            Utils.serveRequest(res, result);
         } else {
-            // no query passed, return all colors
-            colors = await Colors.find().exec();
-        }
+            // leverage Redis (redis-serve runs in background) for memcaching
+            client.get('allColors', (err, result) => {
+                if (result) {
+                    Utils.serveRequest(res, result);
+                } else {
+                    Colors.find().exec().then(result => {
+                        client.setex('allColors', Utils.cacheTimeout, JSON.stringify(result));
 
-        if (colors.length === 0) {
-            res.status(404).send([{status: 404, msg: 'No results matching that search term'}]);
+                        Utils.serveRequest(res, result);
+                    });
+                }
+            });
         }
-
-        res.send(colors);
     }
 });
 
