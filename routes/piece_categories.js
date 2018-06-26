@@ -3,7 +3,7 @@ const router = express.Router();
 
 const PieceCategories = require('../models/piece_categories');
 
-const isValidId = require ('../utils/utils');
+const Utils = require ('../utils/utils');
 
 router.get('/', async (req, res) => {
 	const query = req.query.q;
@@ -35,7 +35,7 @@ router.get('/', async (req, res) => {
 router.get('/:id', async (req, res) => {
 	const pieceCatId = req.params.id;
 
-	if (!isValidId(pieceCatId)) {
+	if (!Utils.isValidId(pieceCatId)) {
 		res.status(404).send({status: 404, msg: 'Id not found'});
 	}
 

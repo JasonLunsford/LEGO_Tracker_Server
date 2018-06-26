@@ -9,7 +9,7 @@ const mongoose = require('mongoose'),
 
 const Sets = require('../models/sets');
 
-const isValidId = require ('../utils/utils');
+const Utils = require ('../utils/utils');
 
 const serveRequest = (res, items) => {
 	if (items.length === 0) {
@@ -42,7 +42,7 @@ router.get('/', async (req, res) => {
 					serveRequest(res, result);
 				} else {
 					Sets.find().exec().then(result => {
-						client.setex('allSets', 3600, JSON.stringify(result));
+						client.setex('allSets', Utils.cacheTimeout, JSON.stringify(result));
 
 						serveRequest(res, result);
 					});
@@ -55,7 +55,7 @@ router.get('/', async (req, res) => {
 router.get('/:id', async (req, res) => {
 	let setId = req.params.id;
 
-	if (!isValidId(setId)) {
+	if (!Utils.isValidId(setId)) {
 		res.status(404).send({status: 404, msg: 'Id not found'});
 	}
 

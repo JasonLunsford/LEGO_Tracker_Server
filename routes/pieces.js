@@ -9,7 +9,7 @@ const mongoose = require('mongoose'),
 
 const Pieces = require('../models/pieces');
 
-const isValidId = require ('../utils/utils');
+const Utils = require ('../utils/utils');
 
 const serveRequest = (res, items) => {
 	if (items.length === 0) {
@@ -42,7 +42,7 @@ router.get('/', async (req, res) => {
 					serveRequest(res, result);
 				} else {
 					Pieces.find().exec().then(result => {
-						client.setex('allPieces', 3600, JSON.stringify(result));
+						client.setex('allPieces', Utils.cacheTimeout, JSON.stringify(result));
 
 						serveRequest(res, result);
 					});
@@ -55,7 +55,7 @@ router.get('/', async (req, res) => {
 router.get('/:id', async (req, res) => {
 	const pieceId = req.params.id;
 
-	if (!isValidId(pieceId)) {
+	if (!Utils.isValidId(pieceId)) {
 		res.status(404).send({status: 404, msg: 'Id not found'});
 	}
 

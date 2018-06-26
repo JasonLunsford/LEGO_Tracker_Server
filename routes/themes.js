@@ -3,7 +3,7 @@ const router = express.Router();
 
 const Themes = require('../models/themes');
 
-const isValidId = require ('../utils/utils');
+const Utils = require ('../utils/utils');
 
 router.get('/', async (req, res) => {
 	const query = req.query.q;
@@ -35,7 +35,7 @@ router.get('/', async (req, res) => {
 router.get('/:id', async (req, res) => {
 	const themeId = req.params.id;
 
-	if (!isValidId(themeId)) {
+	if (!Utils.isValidId(themeId)) {
 		res.status(404).send({status: 404, msg: 'Id not found'});
 	}
 
